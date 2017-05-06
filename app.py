@@ -23,7 +23,7 @@ import requests
 
 
 # Variables
-KEYS = dict([line.split() for line in open('keys')])
+TELEGRAM_API_KEY = os.environ.get('TELEGRAM_API_KEY')
 WELCOME_MESSAGE = 'Welcome to !\nSend a photo of a lesion to begin'
 
 # Enable logging
@@ -36,7 +36,6 @@ logger = logging.getLogger(__name__)
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
     logger.info("Bot Started")
-    logger.info("Keys: %s" % KEYS)
     update.message.reply_text(WELCOME_MESSAGE)
 
 
@@ -53,14 +52,14 @@ def get_input(bot, update):
         update.message.reply_text("Thinking hard...")
         logger.info("Photo received from %s" % user.first_name)
         photo_id = update.message.photo[-1].file_id
-        json_url = ('https://api.telegram.org/bot' + KEYS['BotKey'] +
+        json_url = ('https://api.telegram.org/bot' + TELEGRAM_API_KEY +
                     '/getFile?file_id=' + photo_id)
         logger.info(update.message.photo[-1].file_size)
         
         logger.info(requests.get(json_url).json())
 
         file_path = (requests.get(json_url).json())['result']['file_path']
-        photo_url = ('https://api.telegram.org/file/bot' + KEYS['BotKey']
+        photo_url = ('https://api.telegram.org/file/bot' + TELEGRAM_API_KEY
                      + "/" + file_path)
                      
         logger.info(photo_url)
@@ -75,14 +74,14 @@ def error(bot, update, error):
 
 def main():
     # Create the EventHandler and pass it your bot's token.
-    updater = Updater(KEYS['BotKey'])
+    updater = Updater(TELEGRAM_API_KEY)
     PORT = int(os.environ.get('PORT', '5000'))
 
     updater.start_webhook(listen="0.0.0.0",
                           port=PORT,
-                          url_path=KEYS['BotKey'])
+                          url_path=TELEGRAM_API_KEY)
     updater.bot.setWebhook("https://moodify-bot.herokuapp.com/"
-                           + KEYS['BotKey'])
+                           + TELEGRAM_API_KEY)
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
