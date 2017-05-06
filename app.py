@@ -80,7 +80,7 @@ def main():
     updater.start_webhook(listen="0.0.0.0",
                           port=PORT,
                           url_path=TELEGRAM_API_KEY)
-    updater.bot.setWebhook("https://moodify-bot.herokuapp.com/"
+    updater.bot.setWebhook("https://skinoma.herokuapp.com/"
                            + TELEGRAM_API_KEY)
 
     # Get the dispatcher to register handlers
